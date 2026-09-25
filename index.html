@@ -1499,7 +1499,7 @@ select.form-control {
 
             <div class="form-group">
               <label for="preset-author">Quick Author / Photographer</label>
-              <input type="text" id="preset-author" class="form-control" placeholder="Enter author name..." value="Ananya" disabled>
+              <input type="text" id="preset-author" class="form-control" placeholder="Enter author name..." value="" disabled>
             </div>
 
             <div>
@@ -1704,11 +1704,11 @@ select.form-control {
                 <div class="form-grid">
                   <div class="form-group">
                     <label for="exif-artist">Author / Photographer</label>
-                    <input type="text" id="exif-artist" class="form-control" placeholder="e.g. Jane Doe" value="Ananya" disabled>
+                    <input type="text" id="exif-artist" class="form-control" placeholder="e.g. Jane Doe" value="" disabled>
                   </div>
                   <div class="form-group">
                     <label for="exif-owner">Camera Owner Name</label>
-                    <input type="text" id="exif-owner" class="form-control" placeholder="e.g. Ananya Iyer" value="Ananya Iyer" disabled>
+                    <input type="text" id="exif-owner" class="form-control" placeholder="e.g. John Doe" value="" disabled>
                   </div>
                   <div class="form-group col-2">
                     <label for="exif-copyright">Copyright Notice</label>
@@ -5018,13 +5018,7 @@ function processSingleFile(file) {
           loadedExif = { "0th": {}, "Exif": {}, "GPS": {}, "1st": {}, "thumbnail": null };
         }
 
-        // Pre-populate Author and Owner defaults if not present
-        if (!loadedExif["0th"][piexif.ImageIFD.Artist]) {
-          loadedExif["0th"][piexif.ImageIFD.Artist] = "Ananya";
-        }
-        if (!loadedExif["Exif"][piexif.ExifIFD.CameraOwnerName]) {
-          loadedExif["Exif"][piexif.ExifIFD.CameraOwnerName] = "Ananya Iyer";
-        }
+        // Preserve original EXIF as loaded without injecting artificial defaults
 
         const batchItem = {
           id: "batch_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
@@ -5187,9 +5181,9 @@ function clearAllBatch() {
 
   const formInputs = document.querySelectorAll(".editor-form input, .editor-form select, .editor-form textarea");
   formInputs.forEach(i => i.value = "");
-  document.getElementById("preset-author").value = "Ananya";
-  if (document.getElementById("exif-artist")) document.getElementById("exif-artist").value = "Ananya";
-  if (document.getElementById("exif-owner")) document.getElementById("exif-owner").value = "Ananya Iyer";
+  document.getElementById("preset-author").value = "";
+  if (document.getElementById("exif-artist")) document.getElementById("exif-artist").value = "";
+  if (document.getElementById("exif-owner")) document.getElementById("exif-owner").value = "";
   document.getElementById("preset-select").value = "";
   document.getElementById("geo-preset-select").value = "";
   document.getElementById("gps-search-input").value = "";
@@ -5398,13 +5392,13 @@ function populateFormsFromExif() {
   document.getElementById("exif-colorspace").value = exif[piexif.ExifIFD.ColorSpace] || "1";
 
   // Author & Description
-  const artistVal = activeExif["0th"][piexif.ImageIFD.Artist] || "Ananya";
+  const artistVal = activeExif["0th"][piexif.ImageIFD.Artist] || "";
   document.getElementById("exif-artist").value = artistVal;
   document.getElementById("preset-author").value = artistVal;
   
   const ownerElem = document.getElementById("exif-owner");
   if (ownerElem) {
-    ownerElem.value = exif[piexif.ExifIFD.CameraOwnerName] || "Ananya Iyer";
+    ownerElem.value = exif[piexif.ExifIFD.CameraOwnerName] || "";
   }
   
   document.getElementById("exif-copyright").value = activeExif["0th"][piexif.ImageIFD.Copyright] || "";
@@ -5660,8 +5654,7 @@ const presets = {
     "0th": {
       [piexif.ImageIFD.Make]: "Canon",
       [piexif.ImageIFD.Model]: "Canon EOS 5D Mark IV",
-      [piexif.ImageIFD.Software]: "EXIF Metadata Studio 1.0",
-      [piexif.ImageIFD.Artist]: "Professional Portrait Photographer"
+      [piexif.ImageIFD.Software]: "EXIF Metadata Studio 1.0"
     },
     "Exif": {
       [piexif.ExifIFD.LensMake]: "Canon",
@@ -5683,8 +5676,7 @@ const presets = {
     "0th": {
       [piexif.ImageIFD.Make]: "Sony",
       [piexif.ImageIFD.Model]: "ILCE-7RM5",
-      [piexif.ImageIFD.Software]: "EXIF Metadata Studio 1.0",
-      [piexif.ImageIFD.Artist]: "Fine Art Landscape Artist"
+      [piexif.ImageIFD.Software]: "EXIF Metadata Studio 1.0"
     },
     "Exif": {
       [piexif.ExifIFD.LensMake]: "Sony",
@@ -5706,8 +5698,7 @@ const presets = {
     "0th": {
       [piexif.ImageIFD.Make]: "Fujifilm",
       [piexif.ImageIFD.Model]: "X-T5",
-      [piexif.ImageIFD.Software]: "EXIF Metadata Studio 1.0",
-      [piexif.ImageIFD.Artist]: "Street Documentarian"
+      [piexif.ImageIFD.Software]: "EXIF Metadata Studio 1.0"
     },
     "Exif": {
       [piexif.ExifIFD.LensMake]: "Fujifilm",
@@ -5729,13 +5720,11 @@ const presets = {
     "0th": {
       [piexif.ImageIFD.Make]: "Apple",
       [piexif.ImageIFD.Model]: "iPhone 17",
-      [piexif.ImageIFD.Software]: "iOS 18.3",
-      [piexif.ImageIFD.Artist]: "Ananya"
+      [piexif.ImageIFD.Software]: "iOS 18.3"
     },
     "Exif": {
       [piexif.ExifIFD.LensMake]: "Apple",
       [piexif.ExifIFD.LensModel]: "iPhone 17 back main camera 26mm f/1.6",
-      [piexif.ExifIFD.CameraOwnerName]: "Ananya Iyer",
       [piexif.ExifIFD.ExposureTime]: [1, 33],
       [piexif.ExifIFD.FNumber]: [16, 10], // f/1.6
       [piexif.ExifIFD.ISOSpeedRatings]: 200,
@@ -5752,19 +5741,17 @@ const presets = {
   "iphone-15": {
     "0th": {
       [piexif.ImageIFD.Make]: "Apple",
-      [piexif.ImageIFD.Model]: "iPhone 17",
-      [piexif.ImageIFD.Software]: "iOS 18.3",
-      [piexif.ImageIFD.Artist]: "Ananya"
+      [piexif.ImageIFD.Model]: "iPhone 15 Pro",
+      [piexif.ImageIFD.Software]: "iOS 17.5"
     },
     "Exif": {
       [piexif.ExifIFD.LensMake]: "Apple",
-      [piexif.ExifIFD.LensModel]: "iPhone 17 back main camera 26mm f/1.6",
-      [piexif.ExifIFD.CameraOwnerName]: "Ananya Iyer",
+      [piexif.ExifIFD.LensModel]: "iPhone 15 Pro back triple camera 24mm f/1.78",
       [piexif.ExifIFD.ExposureTime]: [1, 33],
-      [piexif.ExifIFD.FNumber]: [16, 10], // f/1.6
+      [piexif.ExifIFD.FNumber]: [18, 10], // f/1.8
       [piexif.ExifIFD.ISOSpeedRatings]: 200,
-      [piexif.ExifIFD.FocalLength]: [52, 1], // 52 mm
-      [piexif.ExifIFD.FocalLengthIn35mmFilm]: 52,
+      [piexif.ExifIFD.FocalLength]: [24, 1],
+      [piexif.ExifIFD.FocalLengthIn35mmFilm]: 24,
       [piexif.ExifIFD.ExposureBiasValue]: [0, 1],
       [piexif.ExifIFD.ExposureProgram]: 2,
       [piexif.ExifIFD.MeteringMode]: 5,
@@ -6000,7 +5987,7 @@ function applyPreset(presetKey) {
 
   const presetSelect = document.getElementById("preset-select");
   const selectedText = presetSelect && presetSelect.options[presetSelect.selectedIndex] ? presetSelect.options[presetSelect.selectedIndex].text : presetKey;
-  alert(`✅ Preset "${selectedText}" applied!\nCamera, Lens, Exposure, Author (Ananya), and Owner (Ananya Iyer) have been populated.`);
+  alert(`✅ Preset "${selectedText}" applied!\nCamera, Lens, and Exposure parameters have been populated.`);
 }
 
 /* ----------------------------------------------------
@@ -6234,7 +6221,7 @@ function initButtons() {
         item.activeExif = JSON.parse(JSON.stringify(activeExif));
       });
 
-      alert(`✅ Successfully applied current settings (Preset, Camera, GPS, Author: Ananya, Owner: Ananya Iyer) to all ${batchItems.length} images in the batch!`);
+      alert(`✅ Successfully applied current settings (Preset, Camera, GPS, Metadata) to all ${batchItems.length} images in the batch!`);
     });
   }
 
